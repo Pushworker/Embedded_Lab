@@ -1,0 +1,36 @@
+# ? Embedded_Lab: STM32 & Luckfox 异构双核通信项目
+
+![C](https://img.shields.io/badge/Language-C-blue.svg)
+![CMake](https://img.shields.io/badge/Build-CMake-red.svg)
+![Linux](https://img.shields.io/badge/Platform-Linux%20%7C%20Bare--Metal-green.svg)
+
+## 项目简介
+本项目是一个基于**边缘计算架构**的异构双核控制系统。旨在通过现代企业级嵌入式开发工作流，实现上位机（Linux）与下位机（MCU）的稳定协同控制。
+
+*   **下位机（STM32F103）**：负责实时性要求高的底层硬件控制（如电机 PWM、LED 控制），基于状态机实现高鲁棒的串口协议解析。
+*   **上位机（Luckfox Pico）**：负责运行 Linux 系统，处理复杂逻辑（如后期接入的视觉识别、UI 交互），通过 UART 与下位机通信。
+
+##  核心技术栈与工具链
+
+*   **开发环境**：VS Code + CMake + Ninja
+*   **编译器**：ARM GNU Toolchain (arm-none-eabi-gcc) 
+*   **MCU 框架**：STM32 HAL 库 (配置由 STM32CubeMX 生成)
+*   **烧录方式**：串口 ISP (FlyMcu) / OpenOCD
+*   **版本控制**：Git
+
+## ? 通信协议规范
+采用自定义的 5 字节定长帧结构，有效防止数据丢包和错位：
+| 字节位置 | 名称 | 含义 | 示例值 |
+| :---: | :---: | :--- | :---: |
+| Byte 0 | HEAD | 帧头 | `0xAA` |
+| Byte 1 | CMD | 指令码 (如控制电机/灯光) | `0x01` |
+| Byte 2 | DATA | 数据载荷 | `0x64` (100) |
+| Byte 3 | CHECK | 校验和 (HEAD^CMD^DATA) | `0x9A` |
+| Byte 4 | TAIL | 帧尾 | `0x55` |
+
+## 仓库目录结构
+```text
+Embedded_Lab/
+├── stm32_mcu/       # STM32 下位机工程 (C语言 / CMake)
+├── luckfox_app/     # Luckfox 上位机工程 (待更新)
+└── shared_protocol/ # 两端共用的协议头文件 (protocol.h)
