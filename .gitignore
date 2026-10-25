@@ -1,0 +1,9 @@
+# 忽略所有编译生成的 build 文件夹
+build/
+**/build/
+
+# 忽略 VS Code 本地配置缓存
+.vscode/
+
+# 忽略系统文件
+.DS_Store
